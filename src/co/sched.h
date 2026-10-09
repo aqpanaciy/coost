@@ -157,8 +157,8 @@ struct Sched {
     Sched(uint32 id);
     ~Sched();
 
-    #define S 's',_id
-    #define SC 's',_id,'c',_running->id,'(',_running,')'
+    #define MACRO_S 's',_id
+    #define MACRO_SC 's',_id,'c',_running->id,'(',_running,')'
 
     uint32 id() const { return _id; }
 
@@ -183,9 +183,9 @@ struct Sched {
 
     // suspend the current coroutine
     void yield() {
-        CLOG(SC, " yield -> main ctx: ", _main_co->ctx);
+        CLOG(MACRO_SC, " yield -> main ctx: ", _main_co->ctx);
         const tb_context_from_t from = tb_context_jump(_main_co->ctx, _running);
-        CLOG(SC, " yield back from main ctx: ", from.ctx);
+        CLOG(MACRO_SC, " yield back from main ctx: ", from.ctx);
         ((Coroutine*)from.priv)->ctx = from.ctx;
     }
 
@@ -204,7 +204,7 @@ struct Sched {
         const uint32 r = co::rand(_seed) % (g_sched_num - 1);
         const uint32 k = r < _id ? r : r + 1;
         const size_t n = (*g_all_scheds)[k]->_task_mgr.steal_tasks(_new_tasks);
-        CLOG(S, " steal ", n, " tasks from s", k);
+        CLOG(MACRO_S, " steal ", n, " tasks from s", k);
         return n;
     }
 
@@ -218,28 +218,28 @@ struct Sched {
         if (_wait_ms > ms) _wait_ms = ms;
         _running->has_timer = true;
         _running->it = _timer_mgr.add_timer(ms, _running);
-        CLOG(SC, " add timer ", _running->it, " (", ms, " ms)");
+        CLOG(MACRO_SC, " add timer ", _running->it, " (", ms, " ms)");
     }
 
     bool timeout() const { return _timeout; }
 
     bool add_ev_read(sock_t fd) {
-        CLOG(SC, " add ev_read, fd: ", fd);
+        CLOG(MACRO_SC, " add ev_read, fd: ", fd);
         return _epoll->add_ev_read(fd, _running);
     }
 
     bool add_ev_write(sock_t fd) {
-        CLOG(SC, " add ev_write, fd: ", fd);
+        CLOG(MACRO_SC, " add ev_write, fd: ", fd);
         return _epoll->add_ev_write(fd, _running);
     }
 
     void del_ev_read(sock_t fd) {
-        CLOG(SC, " del ev_read, fd: ", fd);
+        CLOG(MACRO_SC, " del ev_read, fd: ", fd);
         _epoll->del_ev_read(fd);
     }
 
     void del_ev_write(sock_t fd) {
-        CLOG(SC, " del ev_write, fd: ", fd);
+        CLOG(MACRO_SC, " del ev_write, fd: ", fd);
         _epoll->del_ev_write(fd);
     }
 
@@ -253,7 +253,7 @@ struct Sched {
 
     // delete all IO events on a socket from the epoll.
     void del_io_event(sock_t fd) {
-        CLOG(SC, " del io event, fd: ", fd);
+        CLOG(MACRO_SC, " del io event, fd: ", fd);
         _epoll->del_event(fd);
     }
 

@@ -15,6 +15,7 @@ elseif is_plat("mingw") then
     set_optimize("faster")
     add_cxflags("-fno-strict-aliasing")
     add_cxflags("-Wno-narrowing", "-Wno-sign-compare", "-Wno-strict-aliasing")
+    add_defines("_WIN32_WINNT=0x0600")
 else
     set_optimize("faster")  -- faster: -O2  fastest: -O3  none: -O0
     add_cxflags("-fno-strict-aliasing")

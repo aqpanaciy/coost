@@ -41,7 +41,7 @@ void Sched::stop() {
 void Sched::main_func(tb_context_from_t from) {
     CLOG("co main_func beg, from main ctx: ", from.ctx);
     ((Coroutine*)from.priv)->ctx = from.ctx; // update the main ctx
-#ifdef _WIN32
+#ifdef _MSC_VER
     __try {
         ((Coroutine*)from.priv)->sched->running()->c();
     } __except(_co_on_exception(GetExceptionInformation())) {
